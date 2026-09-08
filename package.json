@@ -14,14 +14,14 @@
     "vue"
   ],
   "license": "CC-BY-NC-4.0",
-  "author": "Xuan Tang",
+  "author": "angrylid",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/txstc55/ugly-avatar.git"
+    "url": "git+https://github.com/angryLid/ugly-avatar.git"
   },
-  "homepage": "https://txstc55.github.io/ugly-avatar",
+  "homepage": "https://angrylid.github.io/ugly-avatar",
   "bugs": {
-    "url": "https://github.com/txstc55/ugly-avatar/issues"
+    "url": "https://github.com/angryLid/ugly-avatar/issues"
   },
   "files": [
     "lib",

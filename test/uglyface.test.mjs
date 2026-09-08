@@ -33,7 +33,7 @@ test("svg carries the expected structure", () => {
   assert.ok(svg.includes('id="faceContour"'));
   assert.ok(svg.includes('id="hairs"'));
   assert.ok(svg.includes('id="mouth"'));
-  assert.ok(svg.includes("TXSTC55.GITHUB.IO"));
+  assert.ok(svg.includes("ANGRYLID.GITHUB.IO"));
 });
 
 test("transparent option drops the background rect", () => {

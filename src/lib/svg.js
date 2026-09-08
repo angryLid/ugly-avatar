@@ -72,7 +72,7 @@ export function faceDataToSVG(face, opts = {}) {
         </linearGradient>
       </defs>
       <title>That's an ugly face</title>
-      <desc>CREATED BY XUAN TANG, MORE INFO AT TXSTC55.GITHUB.IO</desc>
+      <desc>CREATED BY ANGRYLID, MORE INFO AT ANGRYLID.GITHUB.IO</desc>
       ${transparent ? "" : `<rect x="-100" y="-100" width="100%" height="100%" fill="${face.backgroundColor}"/>`}
       <polyline id="faceContour" points="${points(face.computedFacePoints)}" fill="#ffc9a9" stroke="black" stroke-width="${3.0 / face.faceScale}" stroke-linejoin="round" filter="url(#fuzzy)"/>
       <g transform="translate(${rightTx})">
