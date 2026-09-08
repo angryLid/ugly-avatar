@@ -1,7 +1,5 @@
-function randomFromInterval(min, max) {
-  // min and max included
-  return Math.random() * (max - min) + min;
-}
+import { chance, randomFromInterval } from "./rng.js";
+
 export function getEggShapePoints(a, b, k, segment_points) {
   // the function is x^2/a^2 * (1 + ky) + y^2/b^2 = 1
   var result = [];
@@ -157,16 +155,16 @@ export function generateFaceCountourPoints(numPoints = 100) {
   var faceSizeY1 = randomFromInterval(50, 80);
   var faceSizeX1 = randomFromInterval(70, 100);
   var faceK0 =
-    randomFromInterval(0.001, 0.005) * (Math.random() > 0.5 ? 1 : -1);
+    randomFromInterval(0.001, 0.005) * (chance(0.5) ? 1 : -1);
   var faceK1 =
-    randomFromInterval(0.001, 0.005) * (Math.random() > 0.5 ? 1 : -1);
+    randomFromInterval(0.001, 0.005) * (chance(0.5) ? 1 : -1);
   var face0TranslateX = randomFromInterval(-5, 5);
   var face0TranslateY = randomFromInterval(-15, 15);
 
   var face1TranslateY = randomFromInterval(-5, 5);
   var face1TranslateX = randomFromInterval(-5, 25);
-  var eggOrRect0 = Math.random() > 0.1;
-  var eggOrRect1 = Math.random() > 0.3;
+  var eggOrRect0 = chance(0.9);
+  var eggOrRect1 = chance(0.7);
 
   var results0 = eggOrRect0
     ? getEggShapePoints(faceSizeX0, faceSizeY0, faceK0, numPoints)

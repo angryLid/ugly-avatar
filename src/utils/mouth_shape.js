@@ -1,7 +1,4 @@
-function randomFromInterval(min, max) {
-    // min and max included
-    return Math.random() * (max - min) + min;
-}
+import { chance, randomFromInterval } from "./rng.js";
 function cubicBezier(P0, P1, P2, P3, t) {
     var x = (1 - t) ** 3 * P0[0] + 3 * (1 - t) ** 2 * t * P1[0] + 3 * (1 - t) * t ** 2 * P2[0] + t ** 3 * P3[0];
     var y = (1 - t) ** 3 * P0[1] + 3 * (1 - t) ** 2 * t * P1[1] + 3 * (1 - t) * t ** 2 * P2[1] + t ** 3 * P3[1];
@@ -93,7 +90,7 @@ export function generateMouthShape0(faceCountour, faceHeight, faceWidth) {
     for (var i = 0; i < 1; i += 0.01) {
         mouthPoints.push(cubicBezier(mouthLeft, controlPoint1, controlPoint0, mouthRight, i))
     }
-    if (Math.random() > 0.5) {
+    if (chance(0.5)) {
         for (var i = 0; i < 1; i += 0.01) {
             mouthPoints.push(cubicBezier(mouthRight, controlPoint0, controlPoint1, mouthLeft, i))
         }
@@ -126,7 +123,7 @@ export function generateMouthShape1(faceCountour, faceHeight, faceWidth) {
     }
 
     var center = [(mouthRight[0] + mouthLeft[0]) / 2, mouthPoints[25][1] / 2 + mouthPoints[75][1] / 2];
-    if (Math.random() > 0.5) {
+    if (chance(0.5)) {
         for (var i = 0; i < 1; i += 0.01) {
             mouthPoints.push(cubicBezier(mouthRight, controlPoint0, controlPoint1, mouthLeft, i))
         }

@@ -30,7 +30,7 @@
             offset="0%"
             :style="
               'stop-color: ' +
-              hairColors[Math.floor(Math.random() * 10)] +
+              dyeColors[0] +
               ';  stop-opacity: 1'
             "
           />
@@ -38,7 +38,7 @@
             :offset="dyeColorOffset"
             :style="
               'stop-color: ' +
-              hairColors[Math.floor(Math.random() * hairColors.length)] +
+              dyeColors[1] +
               ';  stop-opacity: 1'
             "
           />
@@ -46,7 +46,7 @@
             offset="100%"
             :style="
               'stop-color: ' +
-              hairColors[Math.floor(Math.random() * hairColors.length)] +
+              dyeColors[2] +
               ';  stop-opacity: 1'
             "
           />
@@ -59,9 +59,7 @@
         y="-100"
         width="100%"
         height="100%"
-        :fill="
-          backgroundColors[Math.floor(Math.random() * backgroundColors.length)]
-        "
+        :fill="backgroundColor"
       />
       <polyline
         id="faceContour"
@@ -141,14 +139,14 @@
           filter="url(#fuzzy)"
         />
         <circle
-          v-for="i in 10"
+          v-for="(c, i) in pupilCirclesRight"
           :key="i"
-          :r="Math.random() * 2 + 3.0"
-          :cx="rightPupilShiftX + Math.random() * 5 - 2.5"
-          :cy="rightPupilShiftY + Math.random() * 5 - 2.5"
+          :r="c.r"
+          :cx="rightPupilShiftX + c.dx"
+          :cy="rightPupilShiftY + c.dy"
           stroke="black"
           fill="none"
-          :stroke-width="1.0 + Math.random() * 0.5"
+          :stroke-width="c.w"
           filter="url(#fuzzy)"
           clip-path="url(#rightEyeClipPath)"
         />
@@ -181,14 +179,14 @@
           filter="url(#fuzzy)"
         />
         <circle
-          v-for="i in 10"
+          v-for="(c, i) in pupilCirclesLeft"
           :key="i"
-          :r="Math.random() * 2 + 3.0"
-          :cx="leftPupilShiftX + Math.random() * 5 - 2.5"
-          :cy="leftPupilShiftY + Math.random() * 5 - 2.5"
+          :r="c.r"
+          :cx="leftPupilShiftX + c.dx"
+          :cy="leftPupilShiftY + c.dy"
           stroke="black"
           fill="none"
-          :stroke-width="1.0 + Math.random() * 0.5"
+          :stroke-width="c.w"
           filter="url(#fuzzy)"
           clip-path="url(#leftEyeClipPath)"
         />
@@ -200,35 +198,35 @@
           :points="hair"
           fill="none"
           :stroke="hairColor"
-          :stroke-width="0.5 + Math.random() * 2.5"
+          :stroke-width="hairWidths[index]"
           stroke-linejoin="round"
           filter="url(#fuzzy)"
         />
       </g>
-      <g id="pointNose" v-if="Math.random() > 0.5">
+      <g id="pointNose" v-if="usePointNose">
         <g id="rightNose">
           <circle
-            v-for="i in 10"
+            v-for="(c, i) in noseCirclesRight"
             :key="i"
-            :r="Math.random() * 2 + 1.0"
-            :cx="rightNoseCenterX + Math.random() * 4 - 2"
-            :cy="rightNoseCenterY + Math.random() * 4 - 2"
+            :r="c.r"
+            :cx="rightNoseCenterX + c.dx"
+            :cy="rightNoseCenterY + c.dy"
             stroke="black"
             fill="none"
-            :stroke-width="1.0 + Math.random() * 0.5"
+            :stroke-width="c.w"
             filter="url(#fuzzy)"
           />
         </g>
         <g id="leftNose">
           <circle
-            v-for="i in 10"
+            v-for="(c, i) in noseCirclesLeft"
             :key="i"
-            :r="Math.random() * 2 + 1.0"
-            :cx="leftNoseCenterX + Math.random() * 4 - 2"
-            :cy="leftNoseCenterY + Math.random() * 4 - 2"
+            :r="c.r"
+            :cx="leftNoseCenterX + c.dx"
+            :cy="leftNoseCenterY + c.dy"
             stroke="black"
             fill="none"
-            :stroke-width="1.0 + Math.random() * 0.5"
+            :stroke-width="c.w"
             filter="url(#fuzzy)"
           />
         </g>
@@ -251,7 +249,7 @@
           "
           fill="none"
           stroke="black"
-          :stroke-width="2.5 + Math.random() * 1.0"
+          :stroke-width="lineNoseWidth"
           stroke-linejoin="round"
           filter="url(#fuzzy)"
         ></path>
@@ -261,14 +259,30 @@
           :points="mouthPoints"
           fill="rgb(215,127,140)"
           stroke="black"
-          :stroke-width="2.7 + Math.random() * 0.5"
+          :stroke-width="mouthWidth"
           stroke-linejoin="round"
           filter="url(#fuzzy)"
         />
       </g>
     </svg>
-    <button @click="generateFace">ANOTHER</button>
+    <button @click="generateFace()">ANOTHER</button>
     <button @click="downloadSVGAsPNG">DOWNLOAD</button>
+    <div class="seed-row">
+      <span class="seed-label" :title="seed">{{ seed || "-" }}</span>
+      <input
+        v-model="seedInput"
+        class="seed-input"
+        placeholder="type a seed"
+        @keyup.enter="loadSeed"
+      />
+      <button class="small" @click="loadSeed">LOAD SEED</button>
+      <button class="small" @click="copyLink">
+        {{ copied ? "COPIED ✓" : "COPY LINK" }}
+      </button>
+    </div>
+    <div v-if="selfCheckResult" class="selfcheck" :class="selfCheckResult">
+      {{ selfCheckResult === "pass" ? "REPRODUCIBLE ✓" : "MISMATCH ✗" }}
+    </div>
   </div>
 </template>
 
@@ -277,11 +291,14 @@ import * as faceShape from "../utils/face_shape.js";
 import * as eyeShape from "../utils/eye_shape.js";
 import * as hairLines from "../utils/hair_lines.js";
 import * as mouthShape from "../utils/mouth_shape.js";
-
-function randomFromInterval(min, max) {
-  // min and max included
-  return Math.random() * (max - min) + min;
-}
+import {
+  next,
+  chance,
+  pick,
+  setSeed,
+  randomSeedString,
+  randomFromInterval,
+} from "../utils/rng.js";
 
 export default {
   name: "FaceGenerator",
@@ -467,12 +484,29 @@ export default {
         "rgb(250, 240, 230)", // Linen
       ],
       mouthPoints: [],
+      seed: "",
+      seedInput: "",
+      copied: false,
+      selfCheckResult: "",
+      backgroundColor: "white",
+      dyeColors: ["black", "black", "black"],
+      pupilCirclesRight: [],
+      pupilCirclesLeft: [],
+      hairWidths: [],
+      usePointNose: true,
+      noseCirclesRight: [],
+      noseCirclesLeft: [],
+      lineNoseWidth: 3,
+      mouthWidth: 3,
     };
   },
   methods: {
-    generateFace() {
-      this.faceScale = 1.5 + Math.random() * 0.6;
-      this.haventSleptForDays = Math.random() > 0.8;
+    generateFace(seed) {
+      seed = seed || randomSeedString();
+      setSeed(seed);
+      this.seed = seed;
+      this.faceScale = 1.5 + next() * 0.6;
+      this.haventSleptForDays = chance(0.2);
       let faceResults = faceShape.generateFaceCountourPoints();
       this.computedFacePoints = faceResults.face;
       this.faceHeight = faceResults.height;
@@ -554,13 +588,13 @@ export default {
         numHairLines.push(Math.floor(randomFromInterval(0, 50)));
       }
       this.hairs = [];
-      if (Math.random() > 0.3) {
+      if (chance(0.7)) {
         this.hairs = hairLines.generateHairLines0(
           this.computedFacePoints,
           numHairLines[0] * 1 + 10,
         );
       }
-      if (Math.random() > 0.3) {
+      if (chance(0.7)) {
         this.hairs = this.hairs.concat(
           hairLines.generateHairLines1(
             this.computedFacePoints,
@@ -568,7 +602,7 @@ export default {
           ),
         );
       }
-      if (Math.random() > 0.5) {
+      if (chance(0.5)) {
         this.hairs = this.hairs.concat(
           hairLines.generateHairLines2(
             this.computedFacePoints,
@@ -576,7 +610,7 @@ export default {
           ),
         );
       }
-      if (Math.random() > 0.5) {
+      if (chance(0.5)) {
         this.hairs = this.hairs.concat(
           hairLines.generateHairLines3(
             this.computedFacePoints,
@@ -596,15 +630,15 @@ export default {
       this.leftNoseCenterY =
         this.rightNoseCenterY +
         randomFromInterval(-this.faceHeight / 30, this.faceHeight / 20);
-      if (Math.random() > 0.1) {
+      if (chance(0.9)) {
         // use natural hair color
-        this.hairColor = this.hairColors[Math.floor(Math.random() * 10)];
+        this.hairColor = pick(this.hairColors.slice(0, 10));
       } else {
         this.hairColor = "url(#rainbowGradient)";
         this.dyeColorOffset = randomFromInterval(0, 100) + "%";
       }
 
-      var choice = Math.floor(Math.random() * 3);
+      var choice = Math.floor(next() * 3);
       if (choice == 0) {
         this.mouthPoints = mouthShape.generateMouthShape0(
           this.computedFacePoints,
@@ -624,6 +658,62 @@ export default {
           this.faceWidth,
         );
       }
+      // Hoisted template randomness: drawn once per face in a fixed order (gradient colors, background, pupils R/L, hair widths, nose choice, nose dots, line/mouth widths).
+      // The template must never draw rng itself, or every re-render would re-roll the face and break the seed contract.
+      this.dyeColors = [
+        pick(this.hairColors.slice(0, 10)),
+        pick(this.hairColors),
+        pick(this.hairColors),
+      ];
+      this.backgroundColor = pick(this.backgroundColors);
+      const makePupilCircles = () =>
+        Array.from({ length: 10 }, () => ({
+          r: next() * 2 + 3.0,
+          dx: next() * 5 - 2.5,
+          dy: next() * 5 - 2.5,
+          w: 1.0 + next() * 0.5,
+        }));
+      this.pupilCirclesRight = makePupilCircles();
+      this.pupilCirclesLeft = makePupilCircles();
+      this.hairWidths = this.hairs.map(() => 0.5 + next() * 2.5);
+      this.usePointNose = chance(0.5);
+      const makeNoseDots = () =>
+        Array.from({ length: 10 }, () => ({
+          r: next() * 2 + 1.0,
+          dx: next() * 4 - 2,
+          dy: next() * 4 - 2,
+          w: 1.0 + next() * 0.5,
+        }));
+      this.noseCirclesRight = makeNoseDots();
+      this.noseCirclesLeft = makeNoseDots();
+      this.lineNoseWidth = 2.5 + next() * 1.0;
+      this.mouthWidth = 2.7 + next() * 0.5;
+      try {
+        history.replaceState(null, "", "?seed=" + encodeURIComponent(seed));
+      } catch (e) {
+        // history API unavailable (e.g. sandboxed iframe); sharing falls back to copying the seed text
+      }
+    },
+    loadSeed() {
+      const s = this.seedInput.trim();
+      if (s) this.generateFace(s);
+    },
+    copyLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        this.copied = true;
+        setTimeout(() => {
+          this.copied = false;
+        }, 1500);
+      });
+    },
+    runSelfCheck() {
+      const svg = document.getElementById("face-svg");
+      const first = new XMLSerializer().serializeToString(svg);
+      this.generateFace(this.seed);
+      this.$nextTick(() => {
+        const second = new XMLSerializer().serializeToString(svg);
+        this.selfCheckResult = first === second ? "pass" : "fail";
+      });
     },
     downloadSVGAsPNG() {
       // download our svg as png
@@ -647,9 +737,14 @@ export default {
     },
   },
   mounted() {
-    this.generateFace();
+    const params = new URLSearchParams(window.location.search);
+    this.generateFace(params.get("seed") || undefined);
+    if (params.get("selfcheck") === "1") {
+      this.$nextTick(() => this.runSelfCheck());
+    }
     // add key binding
     window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT") return;
       if (e.key === " ") {
         this.generateFace();
         // this.downloadSVGAsPNG();
@@ -676,6 +771,51 @@ export default {
   justify-content: center;
   background-color: #ffffff;
   padding: 5px;
+}
+.seed-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.seed-label {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: monospace;
+  font-size: 13px;
+}
+.seed-input {
+  width: 130px;
+  padding: 4px 6px;
+  border: 2px solid black;
+  border-radius: 8px;
+  font-size: 13px;
+}
+button.small {
+  width: auto;
+  margin-top: 0;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.selfcheck {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: bold;
+  z-index: 10;
+}
+.selfcheck.pass {
+  background: #d4f7d4;
+  color: #0a5c0a;
+}
+.selfcheck.fail {
+  background: #ffd6d6;
+  color: #8a0a0a;
 }
 svg {
   background-color: #ffffff;

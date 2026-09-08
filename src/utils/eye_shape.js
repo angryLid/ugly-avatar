@@ -1,7 +1,4 @@
-function randomFromInterval(min, max) {
-    // min and max included
-    return Math.random() * (max - min) + min;
-}
+import { next, randomFromInterval } from "./rng.js";
 
 function cubicBezier(P0, P1, P2, P3, t) {
     var x = (1 - t) ** 3 * P0[0] + 3 * (1 - t) ** 2 * t * P1[0] + 3 * (1 - t) * t ** 2 * P2[0] + t ** 3 * P3[0];
@@ -10,14 +7,14 @@ function cubicBezier(P0, P1, P2, P3, t) {
 }
 
 function generateEyeParameters(width) {
-    let height_upper = Math.random() * width / 1.2;// Less height for the upper eyelid to make it sharper
-    let height_lower = Math.random() * width / 1.2;// More height for the lower eyelid to make it rounder and droopier
-    let P0_upper_randX = Math.random() * 0.4 - 0.2;
-    let P3_upper_randX = Math.random() * 0.4 - 0.2;
-    let P0_upper_randY = Math.random() * 0.4 - 0.2;
-    let P3_upper_randY = Math.random() * 0.4 - 0.2;
-    let offset_upper_left_randY = Math.random();
-    let offset_upper_right_randY = Math.random();
+    let height_upper = next() * width / 1.2;// Less height for the upper eyelid to make it sharper
+    let height_lower = next() * width / 1.2;// More height for the lower eyelid to make it rounder and droopier
+    let P0_upper_randX = next() * 0.4 - 0.2;
+    let P3_upper_randX = next() * 0.4 - 0.2;
+    let P0_upper_randY = next() * 0.4 - 0.2;
+    let P3_upper_randY = next() * 0.4 - 0.2;
+    let offset_upper_left_randY = next();
+    let offset_upper_right_randY = next();
     let P0_upper = [-width / 2 + P0_upper_randX * width / 16, P0_upper_randY * height_upper / 16];
     let P3_upper = [width / 2 + P3_upper_randX * width / 16, P3_upper_randY * height_upper / 16];
     let P0_lower = P0_upper;// Starting at the same point as the upper eyelid
@@ -33,11 +30,11 @@ function generateEyeParameters(width) {
     let offset_lower_left_y = randomFromInterval(-offset_upper_left_y + 5, height_lower);// Upper eyelid control point offset to create asymmetry
     let offset_lower_right_y = randomFromInterval(-offset_upper_right_y + 5, height_lower);// Upper eyelid control point offset to create asymmetry
     // Generate points for the Bezier curves
-    let left_converge0 = Math.random();
-    let right_converge0 = Math.random();
+    let left_converge0 = next();
+    let right_converge0 = next();
     // Generate points for the Bezier curves
-    let left_converge1 = Math.random();
-    let right_converge1 = Math.random();
+    let left_converge1 = next();
+    let right_converge1 = next();
     return {
         height_upper: height_upper,
         height_lower: height_lower,

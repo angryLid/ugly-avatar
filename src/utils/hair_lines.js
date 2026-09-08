@@ -1,7 +1,4 @@
-function randomFromInterval(min, max) {
-  // min and max included
-  return Math.random() * (max - min) + min;
-}
+import { chance, randomFromInterval } from "./rng.js";
 function factorial(n) {
   if (n <= 1) return 1;
   return n * factorial(n - 1);
@@ -100,21 +97,21 @@ export function generateHairLines2(faceCountour, numHairLines = 100) {
     var hair_line = [];
     var index_offset = pickedIndices[i];
     var lower = randomFromInterval(0.8 , 1.4);
-    var reverse = Math.random() > 0.5 ? 1 : -1;
+    var reverse = chance(0.5) ? 1 : -1;
     for (var j = 0; j < numHairPoints; j++){
       var powerscale = randomFromInterval(0.1, 3);
       var portion = (1 - (j / numHairPoints) ** powerscale) * (1 - lower) + lower;
       hair_line.push({x: faceCountourCopy[(faceCountourCopy.length - (reverse * j + index_offset)) % faceCountourCopy.length][0] * portion, y:faceCountourCopy[(faceCountourCopy.length - (reverse * j + index_offset)) % faceCountourCopy.length][1] * portion});
     }
     var d = computeBezierCurve(hair_line, numHairPoints);
-    if (Math.random() > 0.7) d = d.reverse();
+    if (chance(0.3)) d = d.reverse();
     if (results.length == 0){
       results.push(d);
       continue;
     }
     var lastHairPoint = results[results.length - 1][results[results.length - 1].length - 1];
     var lastPointsDistance = Math.sqrt((d[0][0] - lastHairPoint[0]) ** 2 + (d[0][1] - lastHairPoint[1]) ** 2);
-    if (Math.random() > 0.5 && lastPointsDistance < 100){
+    if (chance(0.5) && lastPointsDistance < 100){
       results[results.length - 1] = results[results.length - 1].concat(d);
     }else{
       results.push(d);
@@ -138,7 +135,7 @@ export function generateHairLines3(faceCountour, numHairLines = 100) {
     var hair_line = [];
     var index_offset = pickedIndices[i];
     var lower = randomFromInterval(1 , 2.3);
-    if (Math.random() > 0.9) lower = randomFromInterval(0 , 1.);
+    if (chance(0.1)) lower = randomFromInterval(0 , 1.);
     var reverse = index_offset > splitPoint ? 1 : -1;
     for (var j = 0; j < numHairPoints; j++){
       var powerscale = randomFromInterval(0.1, 3);
