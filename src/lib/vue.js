@@ -2,7 +2,7 @@
 // The component/template must never draw rng itself — all randomness happens once inside
 // generateFaceData() — so re-renders never re-roll the face.
 import { computed, ref, unref, watch, isRef } from "vue";
-import { generateFaceData, faceDataToSVG, svgToDataURL, randomSeed } from "./index.js";
+import { generateFaceData, faceDataToSVG, svgToDataURL } from "./index.js";
 
 export function useUglyFace(seed) {
   const readSeed = () => (seed == null ? undefined : unref(seed));

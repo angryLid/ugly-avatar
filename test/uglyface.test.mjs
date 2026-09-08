@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
+import { ref, nextTick } from "vue";
 import {
   generateFaceData,
   faceDataToSVG,
@@ -11,6 +12,7 @@ import {
   svgToDataURL,
   randomSeed,
 } from "../src/lib/index.js";
+import { useUglyFace } from "../src/lib/vue.js";
 
 const require = createRequire(import.meta.url);
 
@@ -80,4 +82,29 @@ test("generateFacePNG reports browser-only usage in node", async () => {
 test("cjs build loads and generates", { skip: !existsSync("lib/index.cjs") }, () => {
   const ugly = require("../lib/index.cjs");
   assert.ok(ugly.generateFaceSVG("cjs").startsWith("<svg"));
+});
+
+test("useUglyFace reproduces a seed and derives svg/dataUrl", () => {
+  const h = useUglyFace("demo");
+  assert.equal(h.seed.value, "demo");
+  assert.equal(h.svg.value, generateFaceSVG("demo"));
+  assert.ok(h.dataUrl.value.startsWith("data:image/svg+xml;base64,"));
+});
+
+test("useUglyFace setSeed and regenerate work", () => {
+  const h = useUglyFace();
+  h.setSeed("fixed");
+  assert.equal(h.seed.value, "fixed");
+  assert.equal(h.svg.value, generateFaceSVG("fixed"));
+  h.regenerate();
+  assert.notEqual(h.seed.value, "fixed");
+});
+
+test("useUglyFace watches a reactive seed source", async () => {
+  const seed = ref("one");
+  const h = useUglyFace(seed);
+  assert.equal(h.svg.value, generateFaceSVG("one"));
+  seed.value = "two";
+  await nextTick(); // watch flush is queued on the microtask scheduler, not synchronous
+  assert.equal(h.svg.value, generateFaceSVG("two"));
 });
