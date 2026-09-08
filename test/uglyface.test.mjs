@@ -1,0 +1,83 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
+import { createRequire } from "node:module";
+import {
+  generateFaceData,
+  faceDataToSVG,
+  generateFaceSVG,
+  generateFaceDataURL,
+  generateFacePNG,
+  svgToDataURL,
+  randomSeed,
+} from "../src/lib/index.js";
+
+const require = createRequire(import.meta.url);
+
+test("same seed renders byte-identical svg", () => {
+  assert.equal(generateFaceSVG("reproducible"), generateFaceSVG("reproducible"));
+});
+
+test("different seeds render different faces", () => {
+  assert.notEqual(generateFaceSVG("alice"), generateFaceSVG("bob"));
+});
+
+test("svg carries the expected structure", () => {
+  const svg = generateFaceSVG("structure");
+  assert.ok(svg.startsWith("<svg"));
+  assert.ok(svg.endsWith("</svg>"));
+  assert.ok(svg.includes('viewBox="-100 -100 200 200"'));
+  assert.ok(svg.includes('id="fuzzy"'));
+  assert.ok(svg.includes('id="faceContour"'));
+  assert.ok(svg.includes('id="hairs"'));
+  assert.ok(svg.includes('id="mouth"'));
+  assert.ok(svg.includes("TXSTC55.GITHUB.IO"));
+});
+
+test("transparent option drops the background rect", () => {
+  const withBg = generateFaceSVG("bg", { transparent: false });
+  const withoutBg = generateFaceSVG("bg", { transparent: true });
+  assert.ok(withBg.includes("<rect"));
+  assert.ok(!withoutBg.includes("<rect"));
+});
+
+test("size option controls width/height", () => {
+  const svg = generateFaceSVG("size", { size: 128 });
+  assert.ok(svg.includes('width="128"'));
+  assert.ok(svg.includes('height="128"'));
+});
+
+test("face data is reusable via faceDataToSVG", () => {
+  const face = generateFaceData("reuse");
+  assert.equal(face.seed, "reuse");
+  assert.equal(faceDataToSVG(face), generateFaceSVG("reuse"));
+});
+
+test("data url round-trips the svg", () => {
+  const url = generateFaceDataURL("b64");
+  assert.match(url, /^data:image\/svg\+xml;base64,/);
+  const decoded = Buffer.from(url.slice(url.indexOf(",") + 1), "base64").toString("utf-8");
+  assert.equal(decoded, generateFaceSVG("b64"));
+});
+
+test("svgToDataURL handles unicode payloads", () => {
+  const svgString = "<svg><title>丑</title></svg>";
+  const url = svgToDataURL(svgString);
+  const decoded = Buffer.from(url.slice(url.indexOf(",") + 1), "base64").toString("utf-8");
+  assert.equal(decoded, svgString);
+});
+
+test("randomSeed mints fresh 8-char base36 seeds", () => {
+  const s = randomSeed();
+  assert.match(s, /^[0-9a-z]{8}$/);
+  assert.notEqual(s, randomSeed());
+});
+
+test("generateFacePNG reports browser-only usage in node", async () => {
+  await assert.rejects(() => generateFacePNG("png"), /browser canvas/);
+});
+
+test("cjs build loads and generates", { skip: !existsSync("lib/index.cjs") }, () => {
+  const ugly = require("../lib/index.cjs");
+  assert.ok(ugly.generateFaceSVG("cjs").startsWith("<svg"));
+});

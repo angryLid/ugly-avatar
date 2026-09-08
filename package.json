@@ -1,17 +1,72 @@
 {
-  "name": "ugly-face",
-  "version": "0.1.0",
-  "private": true,
+  "name": "uglyface",
+  "version": "1.0.0",
+  "description": "The ugly-avatar generator as a framework-agnostic library: seeded faces as SVG strings, base64 data URLs or PNGs, with an optional Vue 3 composable.",
+  "keywords": [
+    "avatar",
+    "generator",
+    "svg",
+    "face",
+    "ugly",
+    "procedural",
+    "seeded",
+    "random",
+    "vue"
+  ],
+  "license": "CC-BY-NC-4.0",
+  "author": "Xuan Tang",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/txstc55/ugly-avatar.git"
+  },
+  "homepage": "https://txstc55.github.io/ugly-avatar",
+  "bugs": {
+    "url": "https://github.com/txstc55/ugly-avatar/issues"
+  },
+  "files": [
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "lib/index.cjs",
+  "module": "lib/index.mjs",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.cjs"
+    },
+    "./vue": {
+      "types": "./lib/vue.d.ts",
+      "import": "./lib/vue.mjs",
+      "require": "./lib/vue.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "build:lib": "node scripts/build-lib.mjs",
+    "test": "node --test test/*.test.mjs",
+    "prepublishOnly": "npm run build:lib && npm test"
   },
   "dependencies": {
-    "seedrandom": "^3.0.5",
-    "vue": "^3.2.13"
+    "seedrandom": "^3.0.5"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@vue/cli-service": "~5.0.0"
+    "@vue/cli-service": "~5.0.0",
+    "esbuild": "^0.28.2",
+    "vue": "^3.2.13"
   },
   "browserslist": [
     "> 1%",
