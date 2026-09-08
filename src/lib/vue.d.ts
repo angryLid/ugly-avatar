@@ -1,7 +1,7 @@
 import type { ComputedRef, Ref } from "vue";
 import type { FaceData } from "./index.d";
 
-export interface UglyFaceHandle {
+export interface UglyMugHandle {
   seed: ComputedRef<string>;
   face: Ref<FaceData>;
   svg: ComputedRef<string>;
@@ -10,6 +10,6 @@ export interface UglyFaceHandle {
   setSeed(seed?: string): void;
 }
 
-export declare function useUglyFace(
+export declare function useUglyMug(
   seed?: string | Ref<string | undefined> | (() => string | undefined),
-): UglyFaceHandle;
+): UglyMugHandle;

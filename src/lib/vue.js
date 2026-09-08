@@ -4,7 +4,7 @@
 import { computed, ref, unref, watch, isRef } from "vue";
 import { generateFaceData, faceDataToSVG, svgToDataURL } from "./index.js";
 
-export function useUglyFace(seed) {
+export function useUglyMug(seed) {
   const readSeed = () => (seed == null ? undefined : unref(seed));
   const face = ref(generateFaceData(readSeed()));
   if (seed != null && (isRef(seed) || typeof seed === "function")) {

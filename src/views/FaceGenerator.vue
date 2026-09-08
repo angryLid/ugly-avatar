@@ -21,11 +21,11 @@
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from "vue";
-import { useUglyFace } from "../lib/vue.js";
+import { useUglyMug } from "../lib/vue.js";
 import { svgToDataURL } from "../lib/index.js";
 
 const params = new URLSearchParams(window.location.search);
-const { seed, svg, regenerate, setSeed } = useUglyFace(
+const { seed, svg, regenerate, setSeed } = useUglyMug(
   params.get("seed") || undefined,
 );
 

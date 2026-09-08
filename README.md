@@ -1,4 +1,4 @@
-# ugly-avatar
+# uglymug
 
 An ugly avatar generator — every face is derived from its seed, so the same seed always renders the same face.
 
@@ -37,9 +37,9 @@ Options: `{ size, transparent }` — `size` sets the SVG width/height (default 5
 ### Vue 3
 
 ```js
-import { useUglyFace } from "uglymug/vue";
+import { useUglyMug } from "uglymug/vue";
 
-const { seed, svg, dataUrl, regenerate, setSeed } = useUglyFace();
+const { seed, svg, dataUrl, regenerate, setSeed } = useUglyMug();
 ```
 
 ```html
@@ -49,7 +49,7 @@ const { seed, svg, dataUrl, regenerate, setSeed } = useUglyFace();
 <button @click="regenerate">ANOTHER</button>
 ```
 
-`useUglyFace` also accepts a string, a ref, or a getter as the initial seed, and `setSeed(s)` loads a specific seed.
+`useUglyMug` also accepts a string, a ref, or a getter as the initial seed, and `setSeed(s)` loads a specific seed.
 
 ### React
 
@@ -75,8 +75,6 @@ const png = new Resvg(generateFaceSVG(seed), { fitTo: { mode: "width", value: 51
 ### Types & builds
 
 TypeScript declarations are included; both ESM and CJS builds ship in `lib/`. `vue` is an optional peer dependency — only needed for `uglymug/vue`.
-
-Note: the older npm packages `ugly-face` and `ugly-avatar` are unofficial third-party ports; `uglymug` is the official package built from this repository.
 
 ### Development (this repository)
 
