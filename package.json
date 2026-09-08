@@ -1,5 +1,5 @@
 {
-  "name": "@angrylid/uglyface",
+  "name": "uglymug",
   "version": "1.0.0",
   "description": "The ugly-avatar generator as a framework-agnostic library: seeded faces as SVG strings, base64 data URLs or PNGs, with an optional Vue 3 composable.",
   "keywords": [
@@ -45,9 +45,6 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

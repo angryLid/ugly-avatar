@@ -17,14 +17,14 @@ Visit the website: https://angrylid.github.io/ugly-avatar
 
 ## Use as a package
 
-The generator ships on npm as `@angrylid/uglyface` — a framework-agnostic library built from this same source, so the package and the website always render identical faces for a seed.
+The generator ships on npm as `uglymug` — a framework-agnostic library built from this same source, so the package and the website always render identical faces for a seed.
 
 ```bash
-npm install @angrylid/uglyface
+npm install uglymug
 ```
 
 ```js
-import { generateFaceSVG, generateFaceDataURL, generateFacePNG, randomSeed } from "@angrylid/uglyface";
+import { generateFaceSVG, generateFaceDataURL, generateFacePNG, randomSeed } from "uglymug";
 
 const seed = randomSeed();
 const svg = generateFaceSVG(seed);               // '<svg ...>...</svg>'
@@ -37,7 +37,7 @@ Options: `{ size, transparent }` — `size` sets the SVG width/height (default 5
 ### Vue 3
 
 ```js
-import { useUglyFace } from "@angrylid/uglyface/vue";
+import { useUglyFace } from "uglymug/vue";
 
 const { seed, svg, dataUrl, regenerate, setSeed } = useUglyFace();
 ```
@@ -65,7 +65,7 @@ const svg = useMemo(() => generateFaceSVG(seed), [seed]);
 
 ```js
 import { Resvg } from "@resvg/resvg-js";
-import { generateFaceSVG } from "@angrylid/uglyface";
+import { generateFaceSVG } from "uglymug";
 
 const png = new Resvg(generateFaceSVG(seed), { fitTo: { mode: "width", value: 512 } })
   .render()
@@ -74,9 +74,9 @@ const png = new Resvg(generateFaceSVG(seed), { fitTo: { mode: "width", value: 51
 
 ### Types & builds
 
-TypeScript declarations are included; both ESM and CJS builds ship in `lib/`. `vue` is an optional peer dependency — only needed for `@angrylid/uglyface/vue`.
+TypeScript declarations are included; both ESM and CJS builds ship in `lib/`. `vue` is an optional peer dependency — only needed for `uglymug/vue`.
 
-Note: the older npm packages `ugly-face` and `ugly-avatar` are unofficial third-party ports; `@angrylid/uglyface` is the official package built from this repository.
+Note: the older npm packages `ugly-face` and `ugly-avatar` are unofficial third-party ports; `uglymug` is the official package built from this repository.
 
 ### Development (this repository)
 

@@ -1,4 +1,4 @@
-// Vue 3 composable over the core generator. Subpath export: "@angrylid/uglyface/vue".
+// Vue 3 composable over the core generator. Subpath export: "uglymug/vue".
 // The component/template must never draw rng itself — all randomness happens once inside
 // generateFaceData() — so re-renders never re-roll the face.
 import { computed, ref, unref, watch, isRef } from "vue";
