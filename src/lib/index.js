@@ -1,4 +1,4 @@
-// uglyface public API. Core is framework-free; the Vue composable lives in ./vue.js.
+// @angrylid/uglyface public API. Core is framework-free; the Vue composable lives in ./vue.js.
 import { generateFaceData, HAIR_COLORS, BACKGROUND_COLORS } from "./face-data.js";
 import { faceDataToSVG } from "./svg.js";
 import { randomSeedString } from "../utils/rng.js";
