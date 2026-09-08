@@ -16,9 +16,6 @@
         {{ copied ? "COPIED ✓" : "COPY LINK" }}
       </button>
     </div>
-    <div v-if="selfCheckResult" class="selfcheck" :class="selfCheckResult">
-      {{ selfCheckResult === "pass" ? "REPRODUCIBLE ✓" : "MISMATCH ✗" }}
-    </div>
   </div>
 </template>
 
@@ -34,7 +31,6 @@ const { seed, svg, regenerate, setSeed } = useUglyFace(
 
 const seedInput = ref("");
 const copied = ref(false);
-const selfCheckResult = ref("");
 
 // Keep the URL in sync for every path (first load, ANOTHER, space key, LOAD SEED)
 // so a page reload or COPY LINK always reproduces the current face.
@@ -64,14 +60,6 @@ function copyLink() {
   });
 }
 
-// Same seed must yield the same svg; compares the package's own output instead of
-// re-serializing the DOM.
-function runSelfCheck() {
-  const first = svg.value;
-  setSeed(seed.value);
-  selfCheckResult.value = first === svg.value ? "pass" : "fail";
-}
-
 function downloadSVGAsPNG() {
   const canvas = document.createElement("canvas");
   canvas.width = 500;
@@ -99,9 +87,6 @@ function onKeyDown(e) {
 }
 
 onMounted(() => {
-  if (params.get("selfcheck") === "1") {
-    runSelfCheck();
-  }
   window.addEventListener("keydown", onKeyDown);
 });
 
@@ -155,24 +140,6 @@ button.small {
   margin-top: 0;
   padding: 4px 10px;
   font-size: 12px;
-}
-.selfcheck {
-  position: fixed;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-weight: bold;
-  z-index: 10;
-}
-.selfcheck.pass {
-  background: #d4f7d4;
-  color: #0a5c0a;
-}
-.selfcheck.fail {
-  background: #ffd6d6;
-  color: #8a0a0a;
 }
 button {
   margin-top: 10px;
